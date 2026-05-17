@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Source Code Share</title>
+    <meta property="og:image" content="assets/images/hero-visual.svg" />
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <video class="bg-video" autoplay muted loop playsinline>
+      <source src="https://files.catbox.moe/3sgs0o.mp4" type="video/mp4" />
+    </video>
+
+    <div class="overlay"></div>
+
+    <header class="hero">
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <div class="hero-badge">Creative Source Hub</div>
+
+          <div class="avatar">
+            <img
+              src="assets/icons/brand-symbol.svg"
+              alt="Biểu tượng Source Code Share"
+            />
+          </div>
+
+          <h1>SOURCE CODE SHARE</h1>
+
+          <p>
+            Website chia sẻ source code UI, animation và các project web hiện
+            đại, có thể tải trực tiếp từ dữ liệu đã publish trên Supabase.
+          </p>
+
+          <div class="buttons">
+            <a href="#sources" class="btn">
+              <i class="fa-solid fa-code"></i>
+              Xem Source Mới
+            </a>
+
+            <a href="#about" class="btn ghost">
+              <i class="fa-solid fa-circle-info"></i>
+              Tìm Hiểu Thêm
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <img
+            class="hero-visual"
+            src="assets/images/hero-visual.svg"
+            alt="Minh họa giao diện chia sẻ source code"
+          />
+
+          <div class="hero-tags">
+            <span><i class="fa-solid fa-layer-group"></i> UI Systems</span>
+            <span><i class="fa-solid fa-download"></i> Ready Download</span>
+            <span><i class="fa-solid fa-server"></i> Supabase Sync</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="features">
+      <article class="card">
+        <i class="fa-solid fa-mobile-screen"></i>
+        <h3>Responsive</h3>
+        <p>Hiển thị tốt trên mobile, tablet và desktop.</p>
+      </article>
+
+      <article class="card">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <h3>Modern UI</h3>
+        <p>Thiết kế neon glass, animation mượt và dễ nâng cấp.</p>
+      </article>
+
+      <article class="card">
+        <i class="fa-solid fa-database"></i>
+        <h3>Data-driven</h3>
+        <p>
+          Danh sách source được tải trực tiếp từ Supabase thay vì hard-code.
+        </p>
+      </article>
+    </section>
+
+    <section class="sources" id="sources">
+      <div class="section-head">
+        <div>
+          <span class="section-kicker">Published Sources</span>
+          <h2>Danh sách source mới nhất</h2>
+          <p id="sourceCount">Đang đồng bộ dữ liệu từ Supabase...</p>
+        </div>
+
+        <a href="#about" class="text-link">
+          <i class="fa-solid fa-arrow-right"></i>
+          Xem thêm thông tin
+        </a>
+      </div>
+
+      <div class="source-state" id="sourceState">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>Đang tải source...</span>
+      </div>
+
+      <div class="source-grid" id="sourceGrid"></div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="about-box">
+        <h2>ABOUT WEBSITE</h2>
+
+        <p>
+          Đây là website chuyên chia sẻ source code UI, landing page, animation
+          và các project web hiện đại. Toàn bộ dữ liệu có thể được quản lý từ
+          trang admin và lưu trên Supabase.
+        </p>
+
+        <div class="about-list">
+          <div><i class="fa-solid fa-check"></i> Responsive UI</div>
+          <div><i class="fa-solid fa-check"></i> Modern Animation</div>
+          <div><i class="fa-solid fa-check"></i> Supabase Storage</div>
+          <div><i class="fa-solid fa-check"></i> Dễ mở rộng về sau</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <h3>SOURCE CODE SHARE</h3>
+
+      <p>Share modern website source code.</p>
+
+      <div class="buttons">
+        <a
+          href="https://www.facebook.com/hoangthebao01"
+          target="_blank"
+          rel="noreferrer"
+          class="btn"
+        >
+          <i class="fa-brands fa-facebook-f"></i>
+        </a>
+
+        <a
+          href="https://discord.com/channels/@kesuytinh0664wump"
+          target="_blank"
+          rel="noreferrer"
+          class="btn ghost"
+        >
+          <i class="fa-brands fa-discord"></i>
+        </a>
+
+        <a
+          href="https://github.com/baodzpro2009"
+          target="_blank"
+          rel="noreferrer"
+          class="btn ghost"
+        >
+          <i class="fa-brands fa-github"></i>
+        </a>
+      </div>
+
+      <p class="footer-copy">© 2026 Hoàng Thế Bảo</p>
+    </footer>
+
+    <button
+      class="music-toggle"
+      id="musicToggle"
+      type="button"
+      aria-label="Mở trình phát nhạc"
+    >
+      <i class="fa-solid fa-music"></i>
+    </button>
+
+    <div class="music-player" id="musicPlayer">
+      <div class="music-header">
+        <div>
+          <h3 id="musicTitle">Loading...</h3>
+          <p id="musicArtist">Loading...</p>
+        </div>
+
+        <span class="playing">● Playing</span>
+      </div>
+
+      <canvas id="visualizer" class="visualizer" aria-hidden="true"></canvas>
+
+      <div class="progress-box">
+        <span id="current">0:00</span>
+
+        <div class="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <span id="duration">0:00</span>
+      </div>
+
+      <div class="controls">
+        <button id="prevBtn" type="button" aria-label="Bài trước">
+          <i class="fa-solid fa-backward-step"></i>
+        </button>
+
+        <button id="playBtn" type="button" aria-label="Phát hoặc tạm dừng">
+          <i class="fa-solid fa-play"></i>
+        </button>
+
+        <button id="nextBtn" type="button" aria-label="Bài tiếp theo">
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+      </div>
+
+      <div class="volume-box">
+        <i class="fa-solid fa-volume-high"></i>
+        <input
+          type="range"
+          class="volume"
+          id="volumeSlider"
+          min="0"
+          max="1"
+          step="0.1"
+          value="0.7"
+        />
+      </div>
+
+      <audio id="audio"></audio>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/shared/app-config.js"></script>
+    <script src="assets/js/shared/supabase-client.js"></script>
+    <script src="assets/js/pages/index.js"></script>
+    <script src="assets/js/components/player.js"></script>
+  </body>
+</html>

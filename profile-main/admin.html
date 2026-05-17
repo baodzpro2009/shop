@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Control Center</title>
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/pages/admin.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="admin-page">
+<div class="page-glow page-glow-left"></div>
+<div class="page-glow page-glow-right"></div>
+
+<div class="admin-shell">
+  <header class="admin-topbar">
+    <div class="topbar-brand">
+      <img src="assets/icons/brand-symbol.svg" alt="Biểu tượng quản trị">
+
+      <div>
+        <span class="eyebrow">Management Workspace</span>
+        <h1>Admin Control Center</h1>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <span class="session-pill" id="sessionLabel">Đang xác thực...</span>
+
+      <button type="button" class="ghost-btn" onclick="logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Đăng xuất
+      </button>
+    </div>
+  </header>
+
+  <section class="admin-hero">
+    <div class="hero-copy">
+      <span class="section-kicker">Publisher Console</span>
+      <h2>Quản lý source, file nén và metadata trong một workspace tập trung.</h2>
+      <p>
+        Khu vực này được tối ưu cho một luồng publish rõ ràng: nhập thông tin, chọn file,
+        tải lên bucket và ghi metadata để trang public có thể đồng bộ ngay.
+      </p>
+
+      <div class="hero-stats">
+        <article class="stat-card">
+          <span class="stat-label">Storage</span>
+          <strong>Supabase Bucket</strong>
+          <p>ZIP và thumbnail được lưu trong bucket <code>sources</code>.</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Data</span>
+          <strong>Supabase Table</strong>
+          <p>Bài đăng được ghi vào bảng <code>sources</code> để public site render.</p>
+        </article>
+
+        <article class="stat-card">
+          <span class="stat-label">Access</span>
+          <strong>Authenticated Admin</strong>
+          <p>Chỉ tài khoản quản trị hợp lệ mới có thể upload hoặc thao tác.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="hero-preview">
+      <img src="assets/images/admin-visual.svg" alt="Minh họa giao diện quản trị source code">
+
+      <div class="hero-preview-notes">
+        <span><i class="fa-solid fa-cloud-arrow-up"></i> Upload Flow</span>
+        <span><i class="fa-solid fa-user-shield"></i> Admin Guard</span>
+        <span><i class="fa-solid fa-database"></i> Storage Sync</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="admin-grid">
+    <section class="panel form-panel">
+      <div class="panel-header">
+        <div>
+          <span class="section-kicker">Publish Source</span>
+          <h2>Tạo bài đăng mới</h2>
+          <p class="panel-sub">Điền nội dung, kiểm tra tệp và publish trong cùng một form.</p>
+        </div>
+
+        <span class="panel-tag">Ready to upload</span>
+      </div>
+
+      <form id="uploadForm" class="admin-form">
+        <div class="field-grid">
+          <div class="form-group">
+            <label for="title">Tiêu đề source</label>
+            <input id="title" type="text" placeholder="Ví dụ: Landing Page Ecommerce" required>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Mô tả ngắn</label>
+            <input id="description" type="text" placeholder="Nêu công nghệ, tính năng và điểm nổi bật" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="code">Code preview</label>
+          <textarea id="code" placeholder="Dán đoạn code hoặc phần mô tả cấu trúc source tại đây..." required></textarea>
+        </div>
+
+        <div class="upload-grid">
+          <label class="upload-box" for="zipFile">
+            <div class="upload-box-head">
+              <div class="upload-icon">
+                <i class="fa-solid fa-file-zipper"></i>
+              </div>
+
+              <div class="upload-copy">
+                <h3>Gói source ZIP</h3>
+                <p>Tải lên bản nén hoàn chỉnh để người dùng có thể tải về ngay lập tức.</p>
+              </div>
+            </div>
+
+            <input id="zipFile" type="file" accept=".zip,.rar,.7z,application/zip">
+            <span class="file-meta" id="zipMeta">Chưa chọn file</span>
+          </label>
+
+          <label class="upload-box" for="thumbnail">
+            <div class="upload-box-head">
+              <div class="upload-icon accent">
+                <i class="fa-solid fa-image"></i>
+              </div>
+
+              <div class="upload-copy">
+                <h3>Thumbnail preview</h3>
+                <p>Ảnh bìa rõ ràng sẽ giúp bài đăng chuyên nghiệp và dễ nhận diện hơn.</p>
+              </div>
+            </div>
+
+            <input id="thumbnail" type="file" accept="image/*">
+            <span class="file-meta" id="thumbnailMeta">Chưa chọn ảnh</span>
+          </label>
+        </div>
+
+        <div class="submit-row">
+          <p class="form-note">
+            Sau khi publish, dữ liệu sẽ được đồng bộ lên storage và ghi metadata vào Supabase.
+          </p>
+
+          <button type="submit" class="upload-btn">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            Publish Source
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <aside class="panel side-panel">
+      <div class="panel-block">
+        <div class="panel-header compact">
+          <div>
+            <span class="section-kicker">Operator Notes</span>
+            <h2>Checklist thao tác</h2>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <div class="check-item">
+            <i class="fa-solid fa-check"></i>
+            <span>Đặt tiêu đề đúng tên project để dễ tìm và dễ phân loại.</span>
+          </div>
+
+          <div class="check-item">
+            <i class="fa-solid fa-check"></i>
+            <span>Mô tả ngắn nhưng phải đủ công nghệ, tính năng và mục đích sử dụng.</span>
+          </div>
+
+          <div class="check-item">
+            <i class="fa-solid fa-check"></i>
+            <span>Thumbnail nên đúng tỷ lệ và hiển thị tốt trên trang danh sách source.</span>
+          </div>
+
+          <div class="check-item">
+            <i class="fa-solid fa-check"></i>
+            <span>Đảm bảo policy trong <code>docs/supabase-secure-setup.sql</code> đã được áp dụng.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-block info-card">
+        <span class="mini-label">Shortcut</span>
+        <strong>Ctrl + L</strong>
+        <p>Dùng để đăng xuất nhanh khỏi phiên admin hiện tại.</p>
+      </div>
+
+      <div class="panel-block status-box" id="statusBox" data-state="idle">
+        <span class="mini-label">System Status</span>
+        <strong id="statusTitle">Sẵn sàng publish</strong>
+        <p id="statusText">Điền đầy đủ thông tin và chọn tệp để bắt đầu tải lên.</p>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/shared/app-config.js"></script>
+<script src="assets/js/shared/supabase-client.js"></script>
+<script src="assets/js/pages/admin.js"></script>
+</body>
+</html>

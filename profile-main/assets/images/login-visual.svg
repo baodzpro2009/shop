@@ -1,0 +1,33 @@
+<svg width="720" height="360" viewBox="0 0 720 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="360" rx="40" fill="url(#bg)"/>
+  <rect x="42" y="42" width="636" height="276" rx="30" fill="#0B1628" stroke="rgba(255,255,255,0.08)"/>
+  <circle cx="156" cy="178" r="70" fill="url(#shieldGlow)"/>
+  <path d="M156 102L211 124V174C211 212 188 247 156 258C124 247 101 212 101 174V124L156 102Z" fill="#07111F" stroke="#72E0C9" stroke-width="10"/>
+  <path d="M140 176L151 187L177 159" stroke="#F3F7FF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="280" y="108" width="270" height="26" rx="13" fill="url(#lineA)"/>
+  <rect x="280" y="154" width="208" height="18" rx="9" fill="#355886"/>
+  <rect x="280" y="188" width="246" height="18" rx="9" fill="#233A5B"/>
+  <rect x="280" y="236" width="142" height="42" rx="21" fill="url(#cta)"/>
+  <rect x="556" y="108" width="70" height="170" rx="24" fill="#11213A"/>
+  <circle cx="591" cy="144" r="16" fill="#72E0C9"/>
+  <circle cx="591" cy="194" r="16" fill="#7AA6FF"/>
+  <circle cx="591" cy="244" r="16" fill="#FFB870"/>
+  <defs>
+    <linearGradient id="bg" x1="32" y1="18" x2="682" y2="334" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="1" stop-color="#10223A"/>
+    </linearGradient>
+    <radialGradient id="shieldGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(156 178) rotate(90) scale(70)">
+      <stop stop-color="#72E0C9" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#72E0C9" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="lineA" x1="280" y1="108" x2="550" y2="134" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="280" y1="236" x2="422" y2="278" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+  </defs>
+</svg>

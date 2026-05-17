@@ -1,0 +1,7 @@
+{
+  "name": "profile-main-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "node dev-server.js"
+  }
+}

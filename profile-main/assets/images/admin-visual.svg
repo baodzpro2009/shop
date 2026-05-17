@@ -1,0 +1,42 @@
+<svg width="960" height="420" viewBox="0 0 960 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="420" rx="40" fill="url(#bg)"/>
+  <rect x="28" y="28" width="904" height="364" rx="30" fill="#0B1628" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="56" y="56" width="182" height="308" rx="26" fill="#0F1C31"/>
+  <rect x="266" y="56" width="638" height="76" rx="24" fill="#0F1C31"/>
+  <rect x="266" y="156" width="396" height="208" rx="26" fill="#0F1C31"/>
+  <rect x="688" y="156" width="216" height="208" rx="26" fill="#0F1C31"/>
+  <rect x="86" y="92" width="122" height="122" rx="30" fill="url(#mark)"/>
+  <rect x="86" y="244" width="122" height="18" rx="9" fill="#315076"/>
+  <rect x="86" y="278" width="98" height="14" rx="7" fill="#233A5B"/>
+  <rect x="296" y="82" width="220" height="24" rx="12" fill="url(#head)"/>
+  <rect x="546" y="82" width="130" height="24" rx="12" fill="#2A466B"/>
+  <rect x="710" y="78" width="164" height="32" rx="16" fill="#14263F"/>
+  <path d="M308 278H622" stroke="#223754" stroke-width="14" stroke-linecap="round"/>
+  <path d="M308 314H562" stroke="#223754" stroke-width="12" stroke-linecap="round"/>
+  <path d="M308 232C348 196 388 190 424 222C460 254 512 258 558 212C584 185 603 179 624 190" stroke="url(#chart)" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="424" cy="222" r="16" fill="#72E0C9"/>
+  <rect x="718" y="188" width="68" height="136" rx="22" fill="#1B3250"/>
+  <rect x="802" y="226" width="68" height="98" rx="22" fill="url(#bar)"/>
+  <defs>
+    <linearGradient id="bg" x1="42" y1="18" x2="898" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="1" stop-color="#10223A"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="86" y1="92" x2="208" y2="214" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+    <linearGradient id="head" x1="296" y1="82" x2="516" y2="106" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+    <linearGradient id="chart" x1="308" y1="206" x2="624" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="802" y1="226" x2="870" y2="324" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+  </defs>
+</svg>

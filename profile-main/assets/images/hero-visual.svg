@@ -1,0 +1,50 @@
+<svg width="960" height="720" viewBox="0 0 960 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="720" rx="48" fill="url(#bg)"/>
+  <rect x="42" y="42" width="876" height="636" rx="34" fill="#091423" stroke="rgba(255,255,255,0.08)"/>
+  <rect x="86" y="88" width="788" height="64" rx="24" fill="#0D1728"/>
+  <circle cx="124" cy="120" r="9" fill="#FF8F8F"/>
+  <circle cx="155" cy="120" r="9" fill="#FFB870"/>
+  <circle cx="186" cy="120" r="9" fill="#72E0C9"/>
+  <rect x="218" y="102" width="188" height="36" rx="18" fill="#13233D"/>
+  <rect x="86" y="188" width="260" height="440" rx="28" fill="#0D1728"/>
+  <rect x="378" y="188" width="496" height="200" rx="28" fill="#0F1C31"/>
+  <rect x="378" y="416" width="240" height="212" rx="28" fill="#0D1728"/>
+  <rect x="650" y="416" width="224" height="212" rx="28" fill="#0D1728"/>
+  <rect x="116" y="232" width="112" height="112" rx="28" fill="url(#cardA)"/>
+  <rect x="244" y="232" width="72" height="18" rx="9" fill="#33537E"/>
+  <rect x="244" y="266" width="56" height="18" rx="9" fill="#2B456A"/>
+  <rect x="244" y="302" width="64" height="18" rx="9" fill="#203551"/>
+  <rect x="116" y="376" width="200" height="18" rx="9" fill="url(#line)"/>
+  <rect x="116" y="408" width="162" height="14" rx="7" fill="#2B456A"/>
+  <rect x="116" y="436" width="184" height="14" rx="7" fill="#21344E"/>
+  <rect x="116" y="492" width="176" height="92" rx="24" fill="#0A1220" stroke="rgba(255,255,255,0.06)"/>
+  <path d="M416 306C463 230 515 238 556 290C596 342 645 344 694 276C742 208 789 212 838 280" stroke="url(#spark)" stroke-width="18" stroke-linecap="round"/>
+  <circle cx="556" cy="290" r="18" fill="#72E0C9"/>
+  <rect x="416" y="454" width="164" height="126" rx="24" fill="url(#cardB)"/>
+  <rect x="682" y="450" width="98" height="98" rx="28" fill="#14263F"/>
+  <rect x="796" y="450" width="48" height="98" rx="24" fill="#213C63"/>
+  <rect x="682" y="566" width="162" height="16" rx="8" fill="#33537E"/>
+  <defs>
+    <linearGradient id="bg" x1="48" y1="32" x2="880" y2="686" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="0.5" stop-color="#0B1A2E"/>
+      <stop offset="1" stop-color="#122949"/>
+    </linearGradient>
+    <linearGradient id="cardA" x1="116" y1="232" x2="228" y2="344" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+    <linearGradient id="cardB" x1="416" y1="454" x2="580" y2="580" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102339"/>
+      <stop offset="1" stop-color="#1B3151"/>
+    </linearGradient>
+    <linearGradient id="line" x1="116" y1="376" x2="316" y2="394" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="416" y1="282" x2="838" y2="284" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#72E0C9"/>
+      <stop offset="1" stop-color="#7AA6FF"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login</title>
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/main.css">
+<link rel="stylesheet" href="assets/css/pages/login.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="auth-page">
+<div class="auth-glow auth-glow-left"></div>
+<div class="auth-glow auth-glow-right"></div>
+
+<div class="auth-shell">
+  <section class="auth-showcase">
+    <div class="auth-brand">
+      <div class="auth-badge">Private Workspace</div>
+      <img class="auth-brand-mark" src="assets/icons/brand-symbol.svg" alt="Biểu tượng quản trị">
+    </div>
+
+    <div class="auth-copy">
+      <p class="auth-kicker">Source Control Panel</p>
+      <h1>Quản trị source code trong một không gian tách biệt, rõ ràng và an toàn.</h1>
+      <p class="auth-description">
+        Khu vực này dành cho quản trị viên để publish source, đồng bộ metadata lên Supabase
+        và theo dõi trạng thái upload trong một luồng thao tác tập trung.
+      </p>
+    </div>
+
+    <div class="auth-visual">
+      <img src="assets/images/login-visual.svg" alt="Minh họa đăng nhập bảo mật">
+    </div>
+
+    <div class="auth-points">
+      <div class="auth-point">
+        <i class="fa-solid fa-user-shield"></i>
+        <span>Quyền truy cập được kiểm soát theo tài khoản admin</span>
+      </div>
+
+      <div class="auth-point">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <span>Đẩy source và thumbnail lên storage theo một flow duy nhất</span>
+      </div>
+
+      <div class="auth-point">
+        <i class="fa-solid fa-database"></i>
+        <span>Metadata được lưu đồng bộ để trang public render tự động</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="auth-panel">
+    <div class="auth-panel-top">
+      <div class="login-logo">
+        <img src="assets/icons/brand-symbol.svg" alt="Logo Admin">
+      </div>
+
+      <div>
+        <p class="auth-panel-label">Admin Access</p>
+        <h2 class="login-title">Đăng nhập quản trị</h2>
+      </div>
+    </div>
+
+    <p class="login-sub">
+      Sử dụng tài khoản admin đã tạo trong Supabase Auth để truy cập khu vực upload và quản lý source.
+    </p>
+
+    <div class="login-help" id="authHint">
+      Khu vực này chỉ dành cho quản trị viên đã được cấp quyền.
+    </div>
+
+    <form id="loginForm" class="auth-form">
+      <div class="input-box">
+        <label class="field-label" for="email">Email quản trị</label>
+        <i class="fa-solid fa-envelope"></i>
+        <input
+          type="text"
+          class="input"
+          id="email"
+          placeholder="Nhập email quản trị"
+          autocomplete="username"
+          required>
+      </div>
+
+      <div class="input-box">
+        <label class="field-label" for="password">Mật khẩu</label>
+        <i class="fa-solid fa-lock"></i>
+        <input
+          type="password"
+          class="input"
+          id="password"
+          placeholder="Nhập mật khẩu"
+          autocomplete="current-password"
+          required>
+      </div>
+
+      <div class="login-options">
+        <label class="remember">
+          <input type="checkbox" checked disabled>
+          <span>Giữ phiên đăng nhập trên trình duyệt này</span>
+        </label>
+
+        <a href="docs/supabase-auth-setup.md" class="forgot">
+          Hướng dẫn setup
+        </a>
+      </div>
+
+      <button type="submit" class="login-btn">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        Đăng nhập
+      </button>
+    </form>
+
+    <div class="login-extra">
+      <div class="login-extra-card">
+        <strong>Secure Admin Panel</strong>
+        <p>Chỉ tài khoản đã được cấp quyền mới có thể truy cập trang upload.</p>
+      </div>
+
+      <div class="login-extra-card muted">
+        <strong>Production Note</strong>
+        <p>Ẩn hoàn toàn đường dẫn admin khỏi trang public và chỉ chia sẻ nội bộ.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/shared/app-config.js"></script>
+<script src="assets/js/shared/supabase-client.js"></script>
+<script src="assets/js/pages/login.js"></script>
+</body>
+</html>
