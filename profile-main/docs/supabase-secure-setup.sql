@@ -7,7 +7,8 @@ create table if not exists public.sources (
   thumbnail_url text,
   demo_video_url text,
   download_count bigint not null default 0,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
 alter table public.sources
@@ -15,6 +16,9 @@ alter table public.sources
 
 alter table public.sources
   add column if not exists download_count bigint not null default 0;
+
+alter table public.sources
+  add column if not exists updated_at timestamptz not null default now();
 
 create table if not exists public.site_metrics (
   metric_key text primary key,
@@ -49,6 +53,14 @@ on public.sources
 for delete
 to authenticated
 using (lower(auth.jwt()->>'email') in ('admin@example.com'));
+
+drop policy if exists "admin update sources" on public.sources;
+create policy "admin update sources"
+on public.sources
+for update
+to authenticated
+using (lower(auth.jwt()->>'email') in ('admin@example.com'))
+with check (lower(auth.jwt()->>'email') in ('admin@example.com'));
 
 drop policy if exists "admin read metrics" on public.site_metrics;
 create policy "admin read metrics"

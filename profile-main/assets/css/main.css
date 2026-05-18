@@ -442,9 +442,8 @@ body::before{
   font-size:22px;
   line-height:1.3;
   min-height:2.6em;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
+  display:block;
+  max-height:2.6em;
   overflow:hidden;
 }
 
@@ -452,9 +451,8 @@ body::before{
   margin-top:12px;
   color:#d0d0d0;
   line-height:1.75;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
+  display:block;
+  max-height:3.5em;
   overflow:hidden;
   min-height:3.5em;
 }
@@ -480,9 +478,8 @@ body::before{
   line-height:1.7;
   white-space:pre-wrap;
   word-break:break-word;
-  display:-webkit-box;
-  -webkit-line-clamp:3;
-  -webkit-box-orient:vertical;
+  display:block;
+  max-height:4.9em;
   overflow:hidden;
   min-height:86px;
 }

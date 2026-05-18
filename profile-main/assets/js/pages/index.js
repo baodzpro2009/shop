@@ -69,7 +69,7 @@
 
       const downloadButton = item.zip_url
         ? `<a class="btn source-download-btn" href="${escapeHtml(item.zip_url)}" target="_blank" rel="noreferrer" data-download-id="${item.id}"><i class="fa-solid fa-download"></i>Tải Source</a>`
-        : `<span class="btn ghost" aria-disabled="true"><i class="fa-solid fa-ban"></i>Chưa có file</span>`;
+        : '<span class="btn ghost" aria-disabled="true"><i class="fa-solid fa-ban"></i>Chưa có file</span>';
 
       const demoButton = item.demo_video_url
         ? `<a class="btn ghost" href="${escapeHtml(item.demo_video_url)}" target="_blank" rel="noreferrer"><i class="fa-solid fa-circle-play"></i>Xem Demo</a>`

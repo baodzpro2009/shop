@@ -42,12 +42,12 @@
       <h2>Quản lý source, video demo và tệp tải xuống trong một workspace tập trung.</h2>
       <p>
         Khu vực này gom toàn bộ luồng vận hành vào một nơi: nhập metadata, chọn ZIP, thumbnail,
-        video demo, rồi theo dõi danh sách source đã đăng để chỉnh hoặc xóa nhanh khi cần.
+        video demo, theo dõi danh sách source đã đăng, chỉnh sửa nội dung và xóa nhanh khi cần.
       </p>
 
       <div class="hero-stats">
         <article class="stat-card">
-          <span class="stat-label">Storage</span>
+          <span class="stat-label">Sources</span>
           <strong id="totalSourcesValue">0 source</strong>
           <p>Tổng số source đang được lưu và hiển thị trong hệ thống.</p>
         </article>
@@ -71,7 +71,7 @@
 
       <div class="hero-preview-notes">
         <span><i class="fa-solid fa-cloud-arrow-up"></i> Upload Flow</span>
-        <span><i class="fa-solid fa-video"></i> Demo Preview</span>
+        <span><i class="fa-solid fa-pen-to-square"></i> Edit Flow</span>
         <span><i class="fa-solid fa-trash-can"></i> Delete Control</span>
       </div>
     </div>
@@ -82,11 +82,23 @@
       <div class="panel-header">
         <div>
           <span class="section-kicker">Publish Source</span>
-          <h2>Tạo bài đăng mới</h2>
-          <p class="panel-sub">Điền nội dung, tải asset và publish từ một form duy nhất.</p>
+          <h2 id="formTitleLabel">Tạo bài đăng mới</h2>
+          <p class="panel-sub" id="formDescriptionLabel">Điền nội dung, tải asset và publish từ một form duy nhất.</p>
         </div>
 
-        <span class="panel-tag">Ready to upload</span>
+        <span class="panel-tag" id="formModeBadge">Ready to upload</span>
+      </div>
+
+      <div class="edit-banner is-hidden" id="editBanner">
+        <div>
+          <strong id="editBannerTitle">Bạn đang chỉnh sửa một source</strong>
+          <p id="editBannerText">Các thay đổi sẽ được ghi đè lên bài đăng hiện tại sau khi lưu.</p>
+        </div>
+
+        <button type="button" class="ghost-btn" id="cancelEditBtnTop">
+          <i class="fa-solid fa-xmark"></i>
+          Hủy chỉnh sửa
+        </button>
       </div>
 
       <form id="uploadForm" class="admin-form">
@@ -159,13 +171,20 @@
 
         <div class="submit-row">
           <p class="form-note">
-            Sau khi publish, dữ liệu sẽ được đồng bộ lên storage và ghi metadata vào Supabase.
+            Sau khi publish hoặc cập nhật, dữ liệu sẽ được đồng bộ lên storage và ghi metadata vào Supabase.
           </p>
 
-          <button type="submit" class="upload-btn">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            Publish Source
-          </button>
+          <div class="form-actions">
+            <button type="button" class="ghost-btn cancel-edit-btn is-hidden" id="cancelEditBtnBottom">
+              <i class="fa-solid fa-rotate-left"></i>
+              Hủy chỉnh sửa
+            </button>
+
+            <button type="submit" class="upload-btn">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              Publish Source
+            </button>
+          </div>
         </div>
       </form>
     </section>
@@ -192,12 +211,29 @@
 
           <div class="check-item">
             <i class="fa-solid fa-check"></i>
-            <span>Thumbnail nên đúng tỷ lệ và đủ sắc nét để list source nhìn đồng đều.</span>
+            <span>Khi chỉnh sửa source, chỉ chọn lại file nếu bạn thực sự muốn thay thế asset cũ.</span>
           </div>
 
           <div class="check-item">
             <i class="fa-solid fa-check"></i>
-            <span>Muốn xóa được dữ liệu, hãy chạy lại file <code>docs/supabase-secure-setup.sql</code>.</span>
+            <span>Muốn cập nhật, xóa và thống kê chuẩn, hãy chạy lại file <code>docs/supabase-secure-setup.sql</code>.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-block info-card insights-card">
+        <span class="mini-label">Overview</span>
+        <strong id="topSourceValue">Chưa có dữ liệu</strong>
+        <p id="topSourceHint">Source có lượt tải cao nhất sẽ hiện ở đây sau khi có dữ liệu thống kê.</p>
+
+        <div class="insight-list">
+          <div>
+            <span>Source có demo</span>
+            <strong id="demoCoverageValue">0</strong>
+          </div>
+          <div>
+            <span>Source không demo</span>
+            <strong id="noDemoCoverageValue">0</strong>
           </div>
         </div>
       </div>
@@ -221,7 +257,7 @@
       <div>
         <span class="section-kicker">Source Library</span>
         <h2>Danh sách source đã upload</h2>
-        <p class="panel-sub">Theo dõi, tìm nhanh và xóa bài đăng ngay từ khu vực quản trị.</p>
+        <p class="panel-sub">Theo dõi, tìm nhanh, chỉnh sửa và xóa bài đăng ngay từ khu vực quản trị.</p>
       </div>
 
       <span class="panel-tag" id="libraryCount">Đang đồng bộ...</span>

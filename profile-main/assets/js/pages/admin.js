@@ -22,6 +22,18 @@
   const totalSourcesValue = document.getElementById("totalSourcesValue");
   const totalDownloadsValue = document.getElementById("totalDownloadsValue");
   const totalTrafficValue = document.getElementById("totalTrafficValue");
+  const topSourceValue = document.getElementById("topSourceValue");
+  const topSourceHint = document.getElementById("topSourceHint");
+  const demoCoverageValue = document.getElementById("demoCoverageValue");
+  const noDemoCoverageValue = document.getElementById("noDemoCoverageValue");
+  const editBanner = document.getElementById("editBanner");
+  const editBannerTitle = document.getElementById("editBannerTitle");
+  const editBannerText = document.getElementById("editBannerText");
+  const formTitleLabel = document.getElementById("formTitleLabel");
+  const formDescriptionLabel = document.getElementById("formDescriptionLabel");
+  const formModeBadge = document.getElementById("formModeBadge");
+  const cancelEditBtnTop = document.getElementById("cancelEditBtnTop");
+  const cancelEditBtnBottom = document.getElementById("cancelEditBtnBottom");
 
   if (!api || !form || !uploadBtn) {
     console.error("Admin page is missing required scripts or DOM nodes.");
@@ -33,9 +45,12 @@
   const tableName = api.config.SOURCES_TABLE;
   const DEFAULT_UPLOAD_BUTTON =
     '<i class="fa-solid fa-cloud-arrow-up"></i> Publish Source';
+  const DEFAULT_FORM_BADGE = "Ready to upload";
 
   let sourceItems = [];
   let libraryLoading = false;
+  let editingSourceId = null;
+  let editingSourceSnapshot = null;
 
   function escapeHtml(value) {
     return String(value || "")
@@ -56,19 +71,19 @@
       : value;
   }
 
-  function formatMetricCount(value, suffix) {
-    return `${new Intl.NumberFormat("vi-VN").format(Number(value || 0))} ${suffix}`;
-  }
-
   function formatDate(value) {
     if (!value) {
-      return "Chua co ngay";
+      return "Chưa có ngày";
     }
 
     return new Intl.DateTimeFormat("vi-VN", {
       dateStyle: "medium",
       timeStyle: "short"
     }).format(new Date(value));
+  }
+
+  function formatMetricCount(value, suffix) {
+    return `${new Intl.NumberFormat("vi-VN").format(Number(value || 0))} ${suffix}`;
   }
 
   function setStatus(title, message, state = "idle") {
@@ -85,6 +100,16 @@
     }
   }
 
+  function toggleNodeVisibility(node, isVisible, displayValue = "flex") {
+    if (!node) {
+      return;
+    }
+
+    node.hidden = !isVisible;
+    node.classList.toggle("is-hidden", !isVisible);
+    node.style.display = isVisible ? displayValue : "none";
+  }
+
   function updateFileMeta(input, target, emptyLabel) {
     if (!target) {
       return;
@@ -96,14 +121,10 @@
       : emptyLabel;
   }
 
-  function setLibraryStateVisible(isVisible) {
-    if (!libraryState) {
-      return;
-    }
-
-    libraryState.hidden = !isVisible;
-    libraryState.classList.toggle("is-hidden", !isVisible);
-    libraryState.style.display = isVisible ? "flex" : "none";
+  function resetFileMetaLabels() {
+    updateFileMeta(zipInput, zipMeta, editingSourceId ? "Giữ file ZIP hiện tại" : "Chưa chọn file");
+    updateFileMeta(thumbnailInput, thumbnailMeta, editingSourceId ? "Giữ thumbnail hiện tại" : "Chưa chọn ảnh");
+    updateFileMeta(demoVideoInput, videoMeta, editingSourceId ? "Giữ video hiện tại" : "Chưa chọn video");
   }
 
   function setLibraryLoadingState(message, iconClass = "fa-solid fa-spinner fa-spin") {
@@ -111,25 +132,23 @@
       return;
     }
 
-    setLibraryStateVisible(true);
+    toggleNodeVisibility(libraryState, true, "flex");
     libraryState.innerHTML = `<i class="${iconClass}"></i><span>${escapeHtml(message)}</span>`;
     sourceLibrary.innerHTML = "";
   }
 
   function updateLibraryCount(items) {
-    if (!libraryCount) {
-      return;
+    if (libraryCount) {
+      libraryCount.textContent = `${items.length} source`;
     }
-
-    libraryCount.textContent = `${items.length} source`;
   }
 
   function updateDashboardStats(items, pageViews = 0) {
     const totalSources = items.length;
-    const totalDownloads = items.reduce(
-      (sum, item) => sum + Number(item.download_count || 0),
-      0
-    );
+    const totalDownloads = items.reduce((sum, item) => sum + Number(item.download_count || 0), 0);
+    const demoItems = items.filter((item) => item.demo_video_url);
+    const noDemoItems = items.length - demoItems.length;
+    const topSource = [...items].sort((a, b) => Number(b.download_count || 0) - Number(a.download_count || 0))[0];
 
     if (totalSourcesValue) {
       totalSourcesValue.textContent = formatMetricCount(totalSources, "source");
@@ -142,6 +161,64 @@
     if (totalTrafficValue) {
       totalTrafficValue.textContent = formatMetricCount(pageViews, "lượt truy cập");
     }
+
+    if (demoCoverageValue) {
+      demoCoverageValue.textContent = String(demoItems.length);
+    }
+
+    if (noDemoCoverageValue) {
+      noDemoCoverageValue.textContent = String(noDemoItems);
+    }
+
+    if (topSourceValue) {
+      topSourceValue.textContent = topSource
+        ? `${topSource.title} • ${Number(topSource.download_count || 0)} lượt tải`
+        : "Chưa có dữ liệu";
+    }
+
+    if (topSourceHint) {
+      topSourceHint.textContent = topSource
+        ? "Đây là source đang có lượt tải cao nhất trên website."
+        : "Source có lượt tải cao nhất sẽ hiện ở đây sau khi có dữ liệu thống kê.";
+    }
+  }
+
+  function setEditMode(item) {
+    editingSourceId = item.id;
+    editingSourceSnapshot = item;
+
+    document.getElementById("title").value = item.title || "";
+    document.getElementById("description").value = item.description || "";
+    document.getElementById("code").value = item.code || "";
+
+    formTitleLabel.textContent = "Chỉnh sửa source";
+    formDescriptionLabel.textContent = "Cập nhật metadata hoặc thay thế asset rồi lưu lại ngay trong form này.";
+    formModeBadge.textContent = "Editing mode";
+    uploadBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi';
+    toggleNodeVisibility(editBanner, true, "flex");
+    toggleNodeVisibility(cancelEditBtnBottom, true, "inline-flex");
+    editBannerTitle.textContent = `Đang chỉnh sửa: ${item.title}`;
+    editBannerText.textContent = "Bạn có thể sửa text hoặc chọn lại file nếu muốn thay thế asset cũ.";
+    setStatus(
+      "Đang ở chế độ chỉnh sửa",
+      `Mọi thay đổi tiếp theo sẽ được áp dụng lên source "${item.title}".`,
+      "loading"
+    );
+    resetFileMetaLabels();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function clearEditMode() {
+    editingSourceId = null;
+    editingSourceSnapshot = null;
+    form.reset();
+    formTitleLabel.textContent = "Tạo bài đăng mới";
+    formDescriptionLabel.textContent = "Điền nội dung, tải asset và publish từ một form duy nhất.";
+    formModeBadge.textContent = DEFAULT_FORM_BADGE;
+    uploadBtn.innerHTML = DEFAULT_UPLOAD_BUTTON;
+    toggleNodeVisibility(editBanner, false, "flex");
+    toggleNodeVisibility(cancelEditBtnBottom, false, "inline-flex");
+    resetFileMetaLabels();
   }
 
   function getFilteredItems() {
@@ -152,14 +229,7 @@
     }
 
     return sourceItems.filter((item) => {
-      const haystack = [
-        item.title,
-        item.description,
-        item.code
-      ]
-        .join(" ")
-        .toLowerCase();
-
+      const haystack = [item.title, item.description, item.code].join(" ").toLowerCase();
       return haystack.includes(keyword);
     });
   }
@@ -170,7 +240,7 @@
     }
 
     if (!items.length) {
-      setLibraryStateVisible(true);
+      toggleNodeVisibility(libraryState, true, "flex");
       libraryState.innerHTML =
         '<i class="fa-regular fa-folder-open"></i><span>Chưa có source nào khớp với bộ lọc hiện tại.</span>';
       sourceLibrary.innerHTML = "";
@@ -178,7 +248,7 @@
       return;
     }
 
-    setLibraryStateVisible(false);
+    toggleNodeVisibility(libraryState, false, "flex");
     updateLibraryCount(items);
 
     sourceLibrary.innerHTML = items.map((item) => {
@@ -191,9 +261,10 @@
       const videoAction = item.demo_video_url
         ? `<a class="action-btn" href="${escapeHtml(item.demo_video_url)}" target="_blank" rel="noreferrer"><i class="fa-solid fa-circle-play"></i>Xem demo</a>`
         : "";
+      const isEditing = String(editingSourceId) === String(item.id);
 
       return `
-        <article class="library-card" data-source-id="${item.id}">
+        <article class="library-card ${isEditing ? "library-card-editing" : ""}" data-source-id="${item.id}">
           <div class="library-card-head">
             <div>
               <span class="library-item-id">#${item.id}</span>
@@ -201,10 +272,16 @@
               <p>${escapeHtml(item.description)}</p>
             </div>
 
-            <button class="delete-btn" type="button" data-delete-id="${item.id}">
-              <i class="fa-solid fa-trash-can"></i>
-              Xóa
-            </button>
+            <div class="library-card-actions">
+              <button class="edit-btn" type="button" data-edit-id="${item.id}">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Chỉnh sửa
+              </button>
+              <button class="delete-btn" type="button" data-delete-id="${item.id}">
+                <i class="fa-solid fa-trash-can"></i>
+                Xóa
+              </button>
+            </div>
           </div>
 
           <div class="asset-chip-row">
@@ -286,10 +363,10 @@
           "Hãy thay email mẫu trong assets/js/shared/app-config.js bằng email admin thật của bạn.",
           "idle"
         );
-      } else {
+      } else if (!editingSourceId) {
         setStatus(
           "Sẵn sàng publish",
-          "Phiên admin đã hợp lệ. Bạn có thể upload, xem danh sách và xóa source.",
+          "Phiên admin đã hợp lệ. Bạn có thể upload, chỉnh sửa, xem danh sách và xóa source.",
           "idle"
         );
       }
@@ -303,47 +380,53 @@
     }
   }
 
+  async function fetchLibraryItems() {
+    let result = await supabase
+      .from(tableName)
+      .select("id, title, description, code, zip_url, thumbnail_url, demo_video_url, download_count, created_at")
+      .order("created_at", { ascending: false });
+
+    const message = String(result.error?.message || "");
+
+    if (result.error && (message.includes("demo_video_url") || message.includes("download_count"))) {
+      result = await supabase
+        .from(tableName)
+        .select("id, title, description, code, zip_url, thumbnail_url, created_at")
+        .order("created_at", { ascending: false });
+
+      if (!result.error) {
+        result.data = (result.data || []).map((item) => ({
+          ...item,
+          demo_video_url: null,
+          download_count: 0
+        }));
+      }
+    }
+
+    return result;
+  }
+
   async function loadSourceLibrary() {
     if (!sourceLibrary || !libraryState || libraryLoading) {
       return;
     }
 
     libraryLoading = true;
-    refreshSourcesBtn && (refreshSourcesBtn.disabled = true);
+    if (refreshSourcesBtn) {
+      refreshSourcesBtn.disabled = true;
+    }
     setLibraryLoadingState("Đang tải danh sách source...");
 
     try {
-      let result = await supabase
-        .from(tableName)
-        .select("id, title, description, code, zip_url, thumbnail_url, demo_video_url, download_count, created_at")
-        .order("created_at", { ascending: false });
-
-      const message = String(result.error?.message || "");
-
-      if (result.error && (message.includes("demo_video_url") || message.includes("download_count"))) {
-        result = await supabase
-          .from(tableName)
-          .select("id, title, description, code, zip_url, thumbnail_url, created_at")
-          .order("created_at", { ascending: false });
-
-        if (!result.error) {
-          result.data = (result.data || []).map((item) => ({
-            ...item,
-            demo_video_url: null,
-            download_count: 0
-          }));
-        }
-      }
-
-      const { data, error } = result;
+      const { data, error } = await fetchLibraryItems();
 
       if (error) {
         throw error;
       }
 
       sourceItems = data || [];
-      let pageViews = 0;
 
+      let pageViews = 0;
       const { data: metricsData, error: metricsError } = await supabase
         .from("site_metrics")
         .select("metric_value")
@@ -358,7 +441,7 @@
       updateDashboardStats(sourceItems, pageViews);
     } catch (error) {
       console.error(error);
-      setLibraryStateVisible(true);
+      toggleNodeVisibility(libraryState, true, "flex");
       libraryState.innerHTML =
         '<i class="fa-solid fa-triangle-exclamation"></i><span>Không thể tải danh sách source. Kiểm tra table hoặc policy của Supabase.</span>';
       sourceLibrary.innerHTML = "";
@@ -366,16 +449,27 @@
       updateDashboardStats([], 0);
     } finally {
       libraryLoading = false;
-      refreshSourcesBtn && (refreshSourcesBtn.disabled = false);
+      if (refreshSourcesBtn) {
+        refreshSourcesBtn.disabled = false;
+      }
     }
   }
 
-  async function removeStoredAssets(item) {
-    const paths = [
-      extractStoragePathFromPublicUrl(item.zip_url),
-      extractStoragePathFromPublicUrl(item.thumbnail_url),
-      extractStoragePathFromPublicUrl(item.demo_video_url)
-    ].filter(Boolean);
+  async function uploadAsset(path, file, fallbackType) {
+    const { error } = await supabase.storage.from(bucketName).upload(path, file, {
+      contentType: file.type || fallbackType,
+      upsert: false
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    return supabase.storage.from(bucketName).getPublicUrl(path).data.publicUrl;
+  }
+
+  async function removeStoredAssetsByUrls(urls) {
+    const paths = urls.map(extractStoragePathFromPublicUrl).filter(Boolean);
 
     if (!paths.length) {
       return;
@@ -421,7 +515,7 @@
     );
 
     try {
-      await removeStoredAssets(item);
+      await removeStoredAssetsByUrls([item.zip_url, item.thumbnail_url, item.demo_video_url]);
 
       const { error } = await supabase
         .from(tableName)
@@ -432,8 +526,10 @@
         throw error;
       }
 
-      sourceItems = sourceItems.filter((entry) => entry.id !== item.id);
-      renderLibrary(getFilteredItems());
+      if (String(editingSourceId) === String(item.id)) {
+        clearEditMode();
+      }
+
       await loadSourceLibrary();
       setStatus(
         "Xóa thành công",
@@ -456,16 +552,33 @@
     }
   }
 
+  async function handleEditSource(sourceId) {
+    const user = await ensureAdminSession();
+    if (!user) {
+      return;
+    }
+
+    const item = sourceItems.find((entry) => String(entry.id) === String(sourceId));
+
+    if (!item) {
+      alert("Không tìm thấy source cần chỉnh sửa.");
+      return;
+    }
+
+    setEditMode(item);
+    renderLibrary(getFilteredItems());
+  }
+
   zipInput?.addEventListener("change", () => {
-    updateFileMeta(zipInput, zipMeta, "Chưa chọn file");
+    updateFileMeta(zipInput, zipMeta, editingSourceId ? "Giữ file ZIP hiện tại" : "Chưa chọn file");
   });
 
   thumbnailInput?.addEventListener("change", () => {
-    updateFileMeta(thumbnailInput, thumbnailMeta, "Chưa chọn ảnh");
+    updateFileMeta(thumbnailInput, thumbnailMeta, editingSourceId ? "Giữ thumbnail hiện tại" : "Chưa chọn ảnh");
   });
 
   demoVideoInput?.addEventListener("change", () => {
-    updateFileMeta(demoVideoInput, videoMeta, "Chưa chọn video");
+    updateFileMeta(demoVideoInput, videoMeta, editingSourceId ? "Giữ video hiện tại" : "Chưa chọn video");
   });
 
   librarySearch?.addEventListener("input", () => {
@@ -476,14 +589,30 @@
     loadSourceLibrary();
   });
 
+  cancelEditBtnTop?.addEventListener("click", () => {
+    clearEditMode();
+    renderLibrary(getFilteredItems());
+    setStatus("Đã hủy chỉnh sửa", "Form đã quay về chế độ tạo source mới.", "idle");
+  });
+
+  cancelEditBtnBottom?.addEventListener("click", () => {
+    clearEditMode();
+    renderLibrary(getFilteredItems());
+    setStatus("Đã hủy chỉnh sửa", "Form đã quay về chế độ tạo source mới.", "idle");
+  });
+
   sourceLibrary?.addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-edit-id]");
     const deleteButton = event.target.closest("[data-delete-id]");
 
-    if (!deleteButton) {
+    if (editButton) {
+      handleEditSource(editButton.dataset.editId);
       return;
     }
 
-    handleDeleteSource(deleteButton.dataset.deleteId, deleteButton);
+    if (deleteButton) {
+      handleDeleteSource(deleteButton.dataset.deleteId, deleteButton);
+    }
   });
 
   form.addEventListener("submit", async (event) => {
@@ -500,6 +629,7 @@
     const zip = zipInput?.files?.[0] || null;
     const thumbnail = thumbnailInput?.files?.[0] || null;
     const demoVideo = demoVideoInput?.files?.[0] || null;
+    const isEditing = Boolean(editingSourceId);
 
     if (!title || !description || !code) {
       setStatus(
@@ -512,10 +642,15 @@
     }
 
     uploadBtn.disabled = true;
-    uploadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang publish...';
+    uploadBtn.innerHTML = isEditing
+      ? '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu thay đổi...'
+      : '<i class="fa-solid fa-spinner fa-spin"></i> Đang publish...';
+
     setStatus(
-      "Đang tải dữ liệu lên",
-      "Hệ thống đang upload asset và ghi metadata lên Supabase.",
+      isEditing ? "Đang cập nhật source" : "Đang tải dữ liệu lên",
+      isEditing
+        ? "Hệ thống đang cập nhật metadata và thay thế asset cần thiết."
+        : "Hệ thống đang upload asset và ghi metadata lên Supabase.",
       "loading"
     );
 
@@ -531,99 +666,103 @@
       const thumbExt = thumbnail?.name?.split(".").pop() || "jpg";
       const videoExt = demoVideo?.name?.split(".").pop() || "mp4";
 
-      const zipPath = zip ? `${prefix}/${safeTitle || "source"}.${zipExt}` : null;
-      const thumbnailPath = thumbnail
-        ? `${prefix}/${safeTitle || "source"}-thumb.${thumbExt}`
-        : null;
-      const demoVideoPath = demoVideo
-        ? `${prefix}/${safeTitle || "source"}-demo.${videoExt}`
-        : null;
+      const nextZipPath = zip ? `${prefix}/${safeTitle || "source"}.${zipExt}` : null;
+      const nextThumbnailPath = thumbnail ? `${prefix}/${safeTitle || "source"}-thumb.${thumbExt}` : null;
+      const nextDemoVideoPath = demoVideo ? `${prefix}/${safeTitle || "source"}-demo.${videoExt}` : null;
 
-      if (zipPath && zip) {
-        const { error } = await supabase.storage.from(bucketName).upload(zipPath, zip, {
-          contentType: zip.type || "application/zip",
-          upsert: false
-        });
+      const nextZipUrl = zip
+        ? await uploadAsset(nextZipPath, zip, "application/zip")
+        : editingSourceSnapshot?.zip_url || null;
+      const nextThumbnailUrl = thumbnail
+        ? await uploadAsset(nextThumbnailPath, thumbnail, "image/jpeg")
+        : editingSourceSnapshot?.thumbnail_url || null;
+      const nextDemoVideoUrl = demoVideo
+        ? await uploadAsset(nextDemoVideoPath, demoVideo, "video/mp4")
+        : editingSourceSnapshot?.demo_video_url || null;
 
-        if (error) {
-          throw error;
-        }
-      }
-
-      if (thumbnailPath && thumbnail) {
-        const { error } = await supabase.storage.from(bucketName).upload(thumbnailPath, thumbnail, {
-          contentType: thumbnail.type || "image/jpeg",
-          upsert: false
-        });
-
-        if (error) {
-          throw error;
-        }
-      }
-
-      if (demoVideoPath && demoVideo) {
-        const { error } = await supabase.storage.from(bucketName).upload(demoVideoPath, demoVideo, {
-          contentType: demoVideo.type || "video/mp4",
-          upsert: false
-        });
-
-        if (error) {
-          throw error;
-        }
-      }
-
-      const zipUrl = zipPath
-        ? supabase.storage.from(bucketName).getPublicUrl(zipPath).data.publicUrl
-        : null;
-      const thumbnailUrl = thumbnailPath
-        ? supabase.storage.from(bucketName).getPublicUrl(thumbnailPath).data.publicUrl
-        : null;
-      const demoVideoUrl = demoVideoPath
-        ? supabase.storage.from(bucketName).getPublicUrl(demoVideoPath).data.publicUrl
-        : null;
-
-      const { error: insertError } = await supabase.from(tableName).insert({
+      const payload = {
         title,
         description,
         code,
-        zip_url: zipUrl,
-        thumbnail_url: thumbnailUrl,
-        demo_video_url: demoVideoUrl
-      });
+        zip_url: nextZipUrl,
+        thumbnail_url: nextThumbnailUrl,
+        demo_video_url: nextDemoVideoUrl
+      };
 
-      if (insertError) {
-        throw insertError;
+      if (isEditing) {
+        const { error } = await supabase
+          .from(tableName)
+          .update(payload)
+          .eq("id", editingSourceId);
+
+        if (error) {
+          throw error;
+        }
+
+        const obsoleteUrls = [];
+
+        if (zip && editingSourceSnapshot?.zip_url && editingSourceSnapshot.zip_url !== nextZipUrl) {
+          obsoleteUrls.push(editingSourceSnapshot.zip_url);
+        }
+
+        if (thumbnail && editingSourceSnapshot?.thumbnail_url && editingSourceSnapshot.thumbnail_url !== nextThumbnailUrl) {
+          obsoleteUrls.push(editingSourceSnapshot.thumbnail_url);
+        }
+
+        if (demoVideo && editingSourceSnapshot?.demo_video_url && editingSourceSnapshot.demo_video_url !== nextDemoVideoUrl) {
+          obsoleteUrls.push(editingSourceSnapshot.demo_video_url);
+        }
+
+        if (obsoleteUrls.length) {
+          await removeStoredAssetsByUrls(obsoleteUrls);
+        }
+
+        setStatus(
+          "Cập nhật thành công",
+          `Source "${title}" đã được cập nhật thành công.`,
+          "success"
+        );
+      } else {
+        const { error } = await supabase.from(tableName).insert(payload);
+
+        if (error) {
+          throw error;
+        }
+
+        setStatus(
+          "Publish thành công",
+          "Source, thumbnail và video demo đã được lưu thành công.",
+          "success"
+        );
       }
 
-      form.reset();
-      updateFileMeta(zipInput, zipMeta, "Chưa chọn file");
-      updateFileMeta(thumbnailInput, thumbnailMeta, "Chưa chọn ảnh");
-      updateFileMeta(demoVideoInput, videoMeta, "Chưa chọn video");
-      setStatus(
-        "Publish thành công",
-        "Source, thumbnail và video demo đã được lưu thành công.",
-        "success"
-      );
+      clearEditMode();
       await loadSourceLibrary();
-      alert("Upload source thành công.");
+      renderLibrary(getFilteredItems());
+      alert(isEditing ? "Cập nhật source thành công." : "Upload source thành công.");
     } catch (error) {
       console.error(error);
       setStatus(
-        "Publish thất bại",
-        "Không thể upload source. Kiểm tra bucket, bảng hoặc SQL policy mới trong Supabase.",
+        isEditing ? "Cập nhật thất bại" : "Publish thất bại",
+        "Không thể lưu source. Kiểm tra bucket, bảng hoặc SQL policy mới trong Supabase.",
         "error"
       );
-      if (String(error?.message || "").includes("demo_video_url")) {
+
+      const message = String(error?.message || "");
+      if (message.includes("demo_video_url") || message.includes("download_count") || message.includes("site_metrics")) {
         setStatus(
-          "Thiếu cột demo_video_url",
-          "Hãy chạy lại docs/supabase-secure-setup.sql để thêm cột video demo và policy xóa mới.",
+          "Thiếu migration mới",
+          "Hãy chạy lại docs/supabase-secure-setup.sql để thêm cột, RPC và policy mới.",
           "error"
         );
       }
-      alert("Upload thất bại. Mở console để xem chi tiết.");
+
+      alert("Lưu source thất bại. Mở console để xem chi tiết.");
     } finally {
       uploadBtn.disabled = false;
-      uploadBtn.innerHTML = DEFAULT_UPLOAD_BUTTON;
+      uploadBtn.innerHTML = editingSourceId
+        ? '<i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi'
+        : DEFAULT_UPLOAD_BUTTON;
     }
   });
 
@@ -643,6 +782,8 @@
       logout();
     }
   });
+
+  clearEditMode();
 
   (async () => {
     const user = await ensureAdminSession();
