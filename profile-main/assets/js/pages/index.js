@@ -41,9 +41,15 @@
     }).format(date);
   }
 
+  function setSourceStateVisible(isVisible) {
+    sourceState.hidden = !isVisible;
+    sourceState.classList.toggle("is-hidden", !isVisible);
+    sourceState.style.display = isVisible ? "flex" : "none";
+  }
+
   function renderState(iconClass, message) {
     sourceState.innerHTML = `<i class="${iconClass}"></i><span>${escapeHtml(message)}</span>`;
-    sourceState.hidden = false;
+    setSourceStateVisible(true);
     sourceGrid.innerHTML = "";
   }
 
@@ -54,7 +60,6 @@
       return;
     }
 
-    sourceState.hidden = true;
     sourceCount.textContent = `${items.length} source đang hiển thị từ Supabase.`;
 
     sourceGrid.innerHTML = items.map((item) => {
@@ -93,6 +98,7 @@
         </article>
       `;
     }).join("");
+    setSourceStateVisible(false);
   }
 
   async function loadSources() {
