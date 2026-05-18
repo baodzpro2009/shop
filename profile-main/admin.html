@@ -39,29 +39,29 @@
   <section class="admin-hero">
     <div class="hero-copy">
       <span class="section-kicker">Publisher Console</span>
-      <h2>Quản lý source, file nén và metadata trong một workspace tập trung.</h2>
+      <h2>Quản lý source, video demo và tệp tải xuống trong một workspace tập trung.</h2>
       <p>
-        Khu vực này được tối ưu cho một luồng publish rõ ràng: nhập thông tin, chọn file,
-        tải lên bucket và ghi metadata để trang public có thể đồng bộ ngay.
+        Khu vực này gom toàn bộ luồng vận hành vào một nơi: nhập metadata, chọn ZIP, thumbnail,
+        video demo, rồi theo dõi danh sách source đã đăng để chỉnh hoặc xóa nhanh khi cần.
       </p>
 
       <div class="hero-stats">
         <article class="stat-card">
           <span class="stat-label">Storage</span>
-          <strong>Supabase Bucket</strong>
-          <p>ZIP và thumbnail được lưu trong bucket <code>sources</code>.</p>
+          <strong id="totalSourcesValue">0 source</strong>
+          <p>Tổng số source đang được lưu và hiển thị trong hệ thống.</p>
         </article>
 
         <article class="stat-card">
-          <span class="stat-label">Data</span>
-          <strong>Supabase Table</strong>
-          <p>Bài đăng được ghi vào bảng <code>sources</code> để public site render.</p>
+          <span class="stat-label">Downloads</span>
+          <strong id="totalDownloadsValue">0 lượt tải</strong>
+          <p>Số lần người dùng bấm tải source từ trang public.</p>
         </article>
 
         <article class="stat-card">
-          <span class="stat-label">Access</span>
-          <strong>Authenticated Admin</strong>
-          <p>Chỉ tài khoản quản trị hợp lệ mới có thể upload hoặc thao tác.</p>
+          <span class="stat-label">Traffic</span>
+          <strong id="totalTrafficValue">0 lượt truy cập</strong>
+          <p>Lưu lượng truy cập được ghi nhận từ trang public để bạn theo dõi tăng trưởng.</p>
         </article>
       </div>
     </div>
@@ -71,8 +71,8 @@
 
       <div class="hero-preview-notes">
         <span><i class="fa-solid fa-cloud-arrow-up"></i> Upload Flow</span>
-        <span><i class="fa-solid fa-user-shield"></i> Admin Guard</span>
-        <span><i class="fa-solid fa-database"></i> Storage Sync</span>
+        <span><i class="fa-solid fa-video"></i> Demo Preview</span>
+        <span><i class="fa-solid fa-trash-can"></i> Delete Control</span>
       </div>
     </div>
   </section>
@@ -83,7 +83,7 @@
         <div>
           <span class="section-kicker">Publish Source</span>
           <h2>Tạo bài đăng mới</h2>
-          <p class="panel-sub">Điền nội dung, kiểm tra tệp và publish trong cùng một form.</p>
+          <p class="panel-sub">Điền nội dung, tải asset và publish từ một form duy nhất.</p>
         </div>
 
         <span class="panel-tag">Ready to upload</span>
@@ -104,7 +104,7 @@
 
         <div class="form-group">
           <label for="code">Code preview</label>
-          <textarea id="code" placeholder="Dán đoạn code hoặc phần mô tả cấu trúc source tại đây..." required></textarea>
+          <textarea id="code" placeholder="Dán đoạn code hoặc mô tả cấu trúc source tại đây..." required></textarea>
         </div>
 
         <div class="upload-grid">
@@ -116,7 +116,7 @@
 
               <div class="upload-copy">
                 <h3>Gói source ZIP</h3>
-                <p>Tải lên bản nén hoàn chỉnh để người dùng có thể tải về ngay lập tức.</p>
+                <p>Tải lên bản nén hoàn chỉnh để người dùng có thể tải về và sử dụng ngay.</p>
               </div>
             </div>
 
@@ -132,12 +132,28 @@
 
               <div class="upload-copy">
                 <h3>Thumbnail preview</h3>
-                <p>Ảnh bìa rõ ràng sẽ giúp bài đăng chuyên nghiệp và dễ nhận diện hơn.</p>
+                <p>Ảnh bìa rõ ràng giúp card source nhìn chuyên nghiệp và dễ nhận diện hơn.</p>
               </div>
             </div>
 
             <input id="thumbnail" type="file" accept="image/*">
             <span class="file-meta" id="thumbnailMeta">Chưa chọn ảnh</span>
+          </label>
+
+          <label class="upload-box" for="demoVideo">
+            <div class="upload-box-head">
+              <div class="upload-icon video">
+                <i class="fa-solid fa-video"></i>
+              </div>
+
+              <div class="upload-copy">
+                <h3>Video demo</h3>
+                <p>Thêm video giới thiệu để người xem có thể mở nhanh phần demo trước khi tải source.</p>
+              </div>
+            </div>
+
+            <input id="demoVideo" type="file" accept="video/*">
+            <span class="file-meta" id="videoMeta">Chưa chọn video</span>
           </label>
         </div>
 
@@ -166,22 +182,22 @@
         <div class="checklist">
           <div class="check-item">
             <i class="fa-solid fa-check"></i>
-            <span>Đặt tiêu đề đúng tên project để dễ tìm và dễ phân loại.</span>
+            <span>Đặt tiêu đề đúng tên project để dễ tìm, dễ lọc và dễ quản trị về sau.</span>
           </div>
 
           <div class="check-item">
             <i class="fa-solid fa-check"></i>
-            <span>Mô tả ngắn nhưng phải đủ công nghệ, tính năng và mục đích sử dụng.</span>
+            <span>Video demo nên ngắn, rõ UI hoặc flow chính để tăng chất lượng bài đăng.</span>
           </div>
 
           <div class="check-item">
             <i class="fa-solid fa-check"></i>
-            <span>Thumbnail nên đúng tỷ lệ và hiển thị tốt trên trang danh sách source.</span>
+            <span>Thumbnail nên đúng tỷ lệ và đủ sắc nét để list source nhìn đồng đều.</span>
           </div>
 
           <div class="check-item">
             <i class="fa-solid fa-check"></i>
-            <span>Đảm bảo policy trong <code>docs/supabase-secure-setup.sql</code> đã được áp dụng.</span>
+            <span>Muốn xóa được dữ liệu, hãy chạy lại file <code>docs/supabase-secure-setup.sql</code>.</span>
           </div>
         </div>
       </div>
@@ -199,6 +215,37 @@
       </div>
     </aside>
   </main>
+
+  <section class="panel library-panel">
+    <div class="panel-header library-header">
+      <div>
+        <span class="section-kicker">Source Library</span>
+        <h2>Danh sách source đã upload</h2>
+        <p class="panel-sub">Theo dõi, tìm nhanh và xóa bài đăng ngay từ khu vực quản trị.</p>
+      </div>
+
+      <span class="panel-tag" id="libraryCount">Đang đồng bộ...</span>
+    </div>
+
+    <div class="library-toolbar">
+      <div class="toolbar-search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input id="librarySearch" type="search" placeholder="Tìm theo tiêu đề, mô tả hoặc code preview">
+      </div>
+
+      <button type="button" class="ghost-btn refresh-btn" id="refreshSourcesBtn">
+        <i class="fa-solid fa-rotate-right"></i>
+        Làm mới danh sách
+      </button>
+    </div>
+
+    <div class="library-state" id="libraryState">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <span>Đang tải danh sách source...</span>
+    </div>
+
+    <div class="source-library" id="sourceLibrary"></div>
+  </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
