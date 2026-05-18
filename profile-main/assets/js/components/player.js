@@ -38,7 +38,8 @@
     { title: "Bài 3", artist: "MP4 Music", src: "https://files.catbox.moe/qoc2wv.mp4" },
     { title: "Bài 4", artist: "MP4 Music", src: "https://files.catbox.moe/6vryoo.mp4" },
     { title: "Bài 5", artist: "MP4 Music", src: "https://files.catbox.moe/gcbu9w.mp4" },
-    { title: "Bài 6", artist: "MP Music", src: "https://files.catbox.moe/plsvn1.mp4" }
+    { title: "Bài 6", artist: "MP4 Music", src: "https://files.catbox.moe/k92n7y.mp4" },
+    { title: "Bài 7", artist: "MP4 Music", src: "https://files.catbox.moe/plsvn1.mp4" }
   ];
 
   let currentSong = 0;
