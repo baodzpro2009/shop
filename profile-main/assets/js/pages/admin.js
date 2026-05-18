@@ -34,6 +34,15 @@
   const formModeBadge = document.getElementById("formModeBadge");
   const cancelEditBtnTop = document.getElementById("cancelEditBtnTop");
   const cancelEditBtnBottom = document.getElementById("cancelEditBtnBottom");
+  const trafficRangeLabel = document.getElementById("trafficRangeLabel");
+  const trafficChartState = document.getElementById("trafficChartState");
+  const trafficChartShell = document.getElementById("trafficChartShell");
+  const trafficChartYAxis = document.getElementById("trafficChartYAxis");
+  const trafficChartXAxis = document.getElementById("trafficChartXAxis");
+  const trafficGrid = document.getElementById("trafficGrid");
+  const trafficAreaPath = document.getElementById("trafficAreaPath");
+  const trafficLinePath = document.getElementById("trafficLinePath");
+  const trafficPointLayer = document.getElementById("trafficPointLayer");
 
   if (!api || !form || !uploadBtn) {
     console.error("Admin page is missing required scripts or DOM nodes.");
@@ -51,6 +60,7 @@
   let libraryLoading = false;
   let editingSourceId = null;
   let editingSourceSnapshot = null;
+  const TRAFFIC_DAYS = 14;
 
   function escapeHtml(value) {
     return String(value || "")
@@ -84,6 +94,13 @@
 
   function formatMetricCount(value, suffix) {
     return `${new Intl.NumberFormat("vi-VN").format(Number(value || 0))} ${suffix}`;
+  }
+
+  function formatShortDate(value) {
+    return new Intl.DateTimeFormat("vi-VN", {
+      day: "numeric",
+      month: "short"
+    }).format(new Date(value));
   }
 
   function setStatus(title, message, state = "idle") {
@@ -181,6 +198,75 @@
         ? "Đây là source đang có lượt tải cao nhất trên website."
         : "Source có lượt tải cao nhất sẽ hiện ở đây sau khi có dữ liệu thống kê.";
     }
+  }
+
+  function setTrafficChartState(message, isVisible = true, iconClass = "fa-solid fa-spinner fa-spin") {
+    if (!trafficChartState || !trafficChartShell) {
+      return;
+    }
+
+    toggleNodeVisibility(trafficChartState, isVisible, "flex");
+    toggleNodeVisibility(trafficChartShell, !isVisible, "grid");
+
+    if (isVisible) {
+      trafficChartState.innerHTML = `<i class="${iconClass}"></i><span>${escapeHtml(message)}</span>`;
+    }
+  }
+
+  function renderTrafficChart(rows) {
+    if (!trafficChartYAxis || !trafficChartXAxis || !trafficGrid || !trafficAreaPath || !trafficLinePath || !trafficPointLayer) {
+      return;
+    }
+
+    if (!rows.length) {
+      setTrafficChartState("Chưa có dữ liệu traffic để hiển thị biểu đồ.", true, "fa-regular fa-chart-bar");
+      return;
+    }
+
+    const width = 720;
+    const height = 260;
+    const maxValue = Math.max(...rows.map((row) => Number(row.page_views || 0)), 1);
+    const paddedMax = Math.max(5, Math.ceil(maxValue * 1.15));
+    const chartHeight = height - 26;
+    const stepX = rows.length > 1 ? width / (rows.length - 1) : width;
+    const points = rows.map((row, index) => {
+      const value = Number(row.page_views || 0);
+      const x = rows.length > 1 ? index * stepX : width / 2;
+      const y = chartHeight - (value / paddedMax) * chartHeight + 8;
+      return { x, y, value, label: row.metric_date };
+    });
+
+    const linePath = points
+      .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
+      .join(" ");
+    const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(2)} ${height} L ${points[0].x.toFixed(2)} ${height} Z`;
+    const yTicks = Array.from({ length: 5 }, (_, index) => Math.round((paddedMax * (4 - index)) / 4));
+
+    trafficLinePath.setAttribute("d", linePath);
+    trafficAreaPath.setAttribute("d", areaPath);
+    trafficGrid.innerHTML = yTicks
+      .map((_, index) => {
+        const y = 8 + (chartHeight / 4) * index;
+        return `<line class="traffic-chart-grid-line" x1="0" y1="${y.toFixed(2)}" x2="${width}" y2="${y.toFixed(2)}"></line>`;
+      })
+      .join("");
+    trafficPointLayer.innerHTML = points
+      .map((point) => `<circle class="traffic-chart-point" cx="${point.x.toFixed(2)}" cy="${point.y.toFixed(2)}" r="4"><title>${escapeHtml(formatShortDate(point.label))}: ${point.value} lượt truy cập</title></circle>`)
+      .join("");
+    trafficChartYAxis.innerHTML = yTicks
+      .map((tick) => `<span>${new Intl.NumberFormat("vi-VN").format(tick)}</span>`)
+      .join("");
+
+    const axisLabels = rows.filter((_, index) => index % 2 === 0 || index === rows.length - 1);
+    trafficChartXAxis.innerHTML = axisLabels
+      .map((row) => `<span>${escapeHtml(formatShortDate(row.metric_date))}</span>`)
+      .join("");
+
+    if (trafficRangeLabel) {
+      trafficRangeLabel.textContent = `${rows.length} ngày gần nhất`;
+    }
+
+    setTrafficChartState("", false);
   }
 
   function setEditMode(item) {
@@ -406,6 +492,42 @@
     return result;
   }
 
+  async function fetchTrafficSeries() {
+    const today = new Date();
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - (TRAFFIC_DAYS - 1));
+
+    const startIso = startDate.toISOString().slice(0, 10);
+    const endIso = today.toISOString().slice(0, 10);
+
+    const { data, error } = await supabase
+      .from("site_metric_daily")
+      .select("metric_date, page_views")
+      .gte("metric_date", startIso)
+      .lte("metric_date", endIso)
+      .order("metric_date", { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    const byDate = new Map((data || []).map((row) => [row.metric_date, Number(row.page_views || 0)]));
+    const rows = [];
+
+    for (let offset = 0; offset < TRAFFIC_DAYS; offset += 1) {
+      const current = new Date(startDate);
+      current.setDate(startDate.getDate() + offset);
+      const iso = current.toISOString().slice(0, 10);
+
+      rows.push({
+        metric_date: iso,
+        page_views: byDate.get(iso) || 0
+      });
+    }
+
+    return rows;
+  }
+
   async function loadSourceLibrary() {
     if (!sourceLibrary || !libraryState || libraryLoading) {
       return;
@@ -437,6 +559,18 @@
         pageViews = Number(metricsData?.metric_value || 0);
       }
 
+      try {
+        const trafficSeries = await fetchTrafficSeries();
+        renderTrafficChart(trafficSeries);
+      } catch (trafficError) {
+        console.error(trafficError);
+        setTrafficChartState(
+          "Chưa có dữ liệu traffic theo ngày. Hãy chạy lại SQL setup mới để bật biểu đồ.",
+          true,
+          "fa-solid fa-chart-line"
+        );
+      }
+
       renderLibrary(getFilteredItems());
       updateDashboardStats(sourceItems, pageViews);
     } catch (error) {
@@ -447,6 +581,7 @@
       sourceLibrary.innerHTML = "";
       updateLibraryCount([]);
       updateDashboardStats([], 0);
+      setTrafficChartState("Không thể tải dữ liệu biểu đồ traffic.", true, "fa-solid fa-triangle-exclamation");
     } finally {
       libraryLoading = false;
       if (refreshSourcesBtn) {

@@ -26,12 +26,19 @@ create table if not exists public.site_metrics (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.site_metric_daily (
+  metric_date date primary key,
+  page_views bigint not null default 0,
+  updated_at timestamptz not null default now()
+);
+
 insert into public.site_metrics (metric_key, metric_value)
 values ('page_views', 0)
 on conflict (metric_key) do nothing;
 
 alter table public.sources enable row level security;
 alter table public.site_metrics enable row level security;
+alter table public.site_metric_daily enable row level security;
 
 drop policy if exists "public read sources" on public.sources;
 create policy "public read sources"
@@ -65,6 +72,13 @@ with check (lower(auth.jwt()->>'email') in ('admin@example.com'));
 drop policy if exists "admin read metrics" on public.site_metrics;
 create policy "admin read metrics"
 on public.site_metrics
+for select
+to authenticated
+using (lower(auth.jwt()->>'email') in ('admin@example.com'));
+
+drop policy if exists "admin read daily metrics" on public.site_metric_daily;
+create policy "admin read daily metrics"
+on public.site_metric_daily
 for select
 to authenticated
 using (lower(auth.jwt()->>'email') in ('admin@example.com'));
@@ -114,6 +128,13 @@ begin
   on conflict (metric_key)
   do update
     set metric_value = public.site_metrics.metric_value + 1,
+        updated_at = now();
+
+  insert into public.site_metric_daily (metric_date, page_views, updated_at)
+  values (current_date, 1, now())
+  on conflict (metric_date)
+  do update
+    set page_views = public.site_metric_daily.page_views + 1,
         updated_at = now();
 end;
 $$;

@@ -44,26 +44,6 @@
         Khu vực này gom toàn bộ luồng vận hành vào một nơi: nhập metadata, chọn ZIP, thumbnail,
         video demo, theo dõi danh sách source đã đăng, chỉnh sửa nội dung và xóa nhanh khi cần.
       </p>
-
-      <div class="hero-stats">
-        <article class="stat-card">
-          <span class="stat-label">Sources</span>
-          <strong id="totalSourcesValue">0 source</strong>
-          <p>Tổng số source đang được lưu và hiển thị trong hệ thống.</p>
-        </article>
-
-        <article class="stat-card">
-          <span class="stat-label">Downloads</span>
-          <strong id="totalDownloadsValue">0 lượt tải</strong>
-          <p>Số lần người dùng bấm tải source từ trang public.</p>
-        </article>
-
-        <article class="stat-card">
-          <span class="stat-label">Traffic</span>
-          <strong id="totalTrafficValue">0 lượt truy cập</strong>
-          <p>Lưu lượng truy cập được ghi nhận từ trang public để bạn theo dõi tăng trưởng.</p>
-        </article>
-      </div>
     </div>
 
     <div class="hero-preview">
@@ -73,6 +53,66 @@
         <span><i class="fa-solid fa-cloud-arrow-up"></i> Upload Flow</span>
         <span><i class="fa-solid fa-pen-to-square"></i> Edit Flow</span>
         <span><i class="fa-solid fa-trash-can"></i> Delete Control</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel analytics-panel">
+    <div class="panel-header analytics-header">
+      <div>
+        <span class="section-kicker">Traffic Analytics</span>
+        <h2>Biểu đồ truy cập 14 ngày gần nhất</h2>
+        <p class="panel-sub">Theo dõi xu hướng traffic thực tế từ trang public thay vì chỉ nhìn tổng số.</p>
+      </div>
+
+      <span class="panel-tag" id="trafficRangeLabel">14 ngày gần nhất</span>
+    </div>
+
+    <div class="analytics-summary">
+      <article class="stat-card">
+        <span class="stat-label">Sources</span>
+        <strong id="totalSourcesValue">0 source</strong>
+        <p>Tổng số source đang được lưu và hiển thị trong hệ thống.</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Downloads</span>
+        <strong id="totalDownloadsValue">0 lượt tải</strong>
+        <p>Số lần người dùng bấm tải source từ trang public.</p>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Traffic</span>
+        <strong id="totalTrafficValue">0 lượt truy cập</strong>
+        <p>Lưu lượng truy cập được ghi nhận từ trang public để bạn theo dõi tăng trưởng.</p>
+      </article>
+    </div>
+
+    <div class="traffic-chart-wrap">
+      <div class="traffic-chart-state" id="trafficChartState">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <span>Đang tải dữ liệu biểu đồ...</span>
+      </div>
+
+      <div class="traffic-chart-shell is-hidden" id="trafficChartShell">
+        <div class="traffic-chart-yaxis" id="trafficChartYAxis"></div>
+
+        <div class="traffic-chart-stage">
+          <svg class="traffic-chart-svg" id="trafficChartSvg" viewBox="0 0 720 260" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="trafficAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(122, 166, 255, 0.36)"></stop>
+                <stop offset="100%" stop-color="rgba(122, 166, 255, 0.03)"></stop>
+              </linearGradient>
+            </defs>
+            <g id="trafficGrid"></g>
+            <path id="trafficAreaPath" fill="url(#trafficAreaGradient)"></path>
+            <path id="trafficLinePath" fill="none" stroke="#2f7df6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+            <g id="trafficPointLayer"></g>
+          </svg>
+
+          <div class="traffic-chart-xaxis" id="trafficChartXAxis"></div>
+        </div>
       </div>
     </div>
   </section>
